@@ -536,6 +536,11 @@ ENABLE_SUDO_MODE = True
 SEND_EMAIL_ON_ADDING_SYSTEM_MEMBER = True # Whether to send email when a system staff adding new member.
 SEND_EMAIL_ON_RESETTING_USER_PASSWD = True # Whether to send email when a system staff resetting user's password.
 
+# Only Office
+ENABLE_ONLYOFFICE = False
+ONLYOFFICE_APIJS_URL = ''
+ONLYOFFICE_FILE_EXTENSION = ()
+
 ##########################
 # Settings for Extra App #
 ##########################
