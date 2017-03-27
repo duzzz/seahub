@@ -462,6 +462,7 @@ def _file_view(request, repo_id, path):
             cache.set("ONLYOFFICE_%s" % doc_key, doc_info, None)
             return render_to_response('view_file_via_onlyoffice.html', {
                 'ONLYOFFICE_APIJS_URL': settings.ONLYOFFICE_APIJS_URL,
+                'file_type': fileext,
                 'doc_key': doc_key,
                 'doc_title': doc_title,
                 'doc_url': doc_url,
