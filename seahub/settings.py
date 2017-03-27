@@ -540,6 +540,7 @@ SEND_EMAIL_ON_RESETTING_USER_PASSWD = True # Whether to send email when a system
 ENABLE_ONLYOFFICE = False
 ONLYOFFICE_APIJS_URL = ''
 ONLYOFFICE_FILE_EXTENSION = ()
+VERIFY_ONLYOFFICE_CERTIFICATE = True
 
 ##########################
 # Settings for Extra App #

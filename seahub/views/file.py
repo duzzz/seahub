@@ -449,25 +449,34 @@ def _file_view(request, repo_id, path):
     if is_pro_version() and not repo.encrypted and \
        settings.ENABLE_ONLYOFFICE and \
        fileext in settings.ONLYOFFICE_FILE_EXTENSION:
-            doc_key = gen_token(10)
-            doc_title = os.path.basename(path)
-            dl_token = seafile_api.get_fileserver_access_token(
-                repo.id, obj_id, 'download', username, use_onetime=True)
-            doc_url = gen_file_get_url(dl_token, u_filename)
-            doc_info = json.dumps({'repo_id': repo_id, 'file_path': path,
-                                   'username': username})
-            from django.core.cache import cache
-            from seahub.utils import get_site_scheme_and_netloc
-            assert len(settings.ONLYOFFICE_APIJS_URL) > 1
-            cache.set("ONLYOFFICE_%s" % doc_key, doc_info, None)
-            return render_to_response('view_file_via_onlyoffice.html', {
-                'ONLYOFFICE_APIJS_URL': settings.ONLYOFFICE_APIJS_URL,
-                'file_type': fileext,
-                'doc_key': doc_key,
-                'doc_title': doc_title,
-                'doc_url': doc_url,
-                'callback_url': get_site_scheme_and_netloc().rstrip('/') + reverse('onlyoffice_editor_callback'),
-            }, context_instance=RequestContext(request))
+        doc_key = gen_token(10)
+        if fileext in ('xls', 'xlsx', 'ods', 'fods', 'csv'):
+            document_type = 'spreadsheet'
+        elif fileext in ('pptx', 'ppt', 'odp', 'fodp', 'ppsx', 'pps'):
+            document_type = 'presentation'
+        else:
+            document_type = 'text'
+        doc_title = os.path.basename(path)
+        dl_token = seafile_api.get_fileserver_access_token(
+            repo.id, obj_id, 'download', username, use_onetime=True)
+        doc_url = gen_file_get_url(dl_token, u_filename)
+        doc_info = json.dumps({'repo_id': repo_id, 'file_path': path,
+                               'username': username})
+        from django.core.cache import cache
+        from seahub.utils import get_site_scheme_and_netloc
+        assert len(settings.ONLYOFFICE_APIJS_URL) > 1
+        cache.set("ONLYOFFICE_%s" % doc_key, doc_info, None)
+        return render_to_response('view_file_via_onlyoffice.html', {
+            'ONLYOFFICE_APIJS_URL': settings.ONLYOFFICE_APIJS_URL,
+            'file_type': fileext,
+            'doc_key': doc_key,
+            'doc_title': doc_title,
+            'doc_url': doc_url,
+            'document_type': document_type,
+            'callback_url': get_site_scheme_and_netloc().rstrip('/') + reverse('onlyoffice_editor_callback'),
+            'can_edit': True if file_perm == 'rw' else False,
+            'username': username,
+        }, context_instance=RequestContext(request))
 
     # check if the user is the owner or not, for 'private share'
     if is_org_context(request):
